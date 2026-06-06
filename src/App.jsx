@@ -31,10 +31,11 @@ function App() {
         .about-container { flex-direction: row; }
         .about-image { flex: 0 1 420px; max-width: 420px; }
         .about-text { flex: 1 1 auto; text-align: left; }
+        .mobile-dropdown { display: none !important; }
         @media (max-width: 768px) {
           .desktop-nav { display: none !important; }
           .hamburger { display: block !important; }
-          * { padding: 0; margin: 0; }
+          .mobile-dropdown { display: block !important; }
         }
         @media (max-width: 768px) {
           body { font-size: 14px; }

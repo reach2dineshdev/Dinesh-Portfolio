@@ -129,12 +129,29 @@ export default function Navbar() {
   const active = useActiveSection();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const dropdownRef = useRef(null);
+  const hamburgerRef = useRef(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    if (!open) return;
+    const handleClickOutside = (e) => {
+      if (
+        dropdownRef.current && !dropdownRef.current.contains(e.target) &&
+        hamburgerRef.current && !hamburgerRef.current.contains(e.target)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
 
   const scrollTo = (e, href) => {
     e.preventDefault();
@@ -143,118 +160,131 @@ export default function Navbar() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // Compute nav position/size for dropdown alignment
+  const navTop = scrolled ? 12 : 24;
+  const navHeight = scrolled ? 60 : 70;
+
   return (
-    <nav
-      className="matrix-border-container"
-      style={{
-        position: "fixed",
-        top: scrolled ? 12 : 24,
-        left: "50%",
-        transform: "translateX(-50%)",
-        width: scrolled ? "calc(100% - 60px)" : "calc(100% - 40px)",
-        maxWidth: 1200,
-        zIndex: 1000,
-        background: scrolled ? "rgba(10, 16, 22, 0.85)" : "rgba(10, 16, 22, 0.65)",
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
-        border: "1px solid rgba(14, 238, 255, 0.15)",
-        boxShadow: "0 10px 40px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.05)",
-        borderRadius: scrolled ? 16 : 24,
-        transition: "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-      }}
-    >
-      <div
+    <>
+      <nav
+        className="matrix-border-container"
         style={{
-          padding: "0 1.5rem",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          height: scrolled ? 60 : 70,
-          transition: "height 0.4s ease",
+          position: "fixed",
+          top: navTop,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: scrolled ? "calc(100% - 60px)" : "calc(100% - 40px)",
+          maxWidth: 1200,
+          zIndex: 1000,
+          background: scrolled ? "rgba(10, 16, 22, 0.85)" : "rgba(10, 16, 22, 0.65)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          border: "1px solid rgba(14, 238, 255, 0.15)",
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.05)",
+          borderRadius: scrolled ? 16 : 24,
+          transition: "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
         }}
       >
-        <MagneticWrapper>
-          <a
-            href="#home"
-            onClick={(e) => scrollTo(e, "#home")}
-            className="nav-logo-text"
-            style={{
-              fontSize: scrolled ? 22 : 26,
-              fontWeight: 800,
-              textDecoration: "none",
-              letterSpacing: 1,
-              display: "flex",
-              alignItems: "center",
-              transition: "font-size 0.4s ease",
-            }}
-          >
-            Dinesh<span style={{ color: "#0ef", marginLeft: 2 }}>.</span><span className="beating-heart" style={{ display: "inline-block", marginLeft: 4 }}>❤️</span>
-          </a>
-        </MagneticWrapper>
-
-        {/* Desktop nav */}
-        <ul style={{ display: "flex", gap: "1rem", listStyle: "none", margin: 0, padding: 0 }} className="desktop-nav">
-          {NAV_LINKS.map((l) => {
-            const isActive = active === l.href.replace("#", "");
-            return (
-              <li key={l.href}>
-                <MagneticWrapper>
-                  <ScrambleLink l={l} isActive={isActive} scrollTo={scrollTo} />
-                </MagneticWrapper>
-              </li>
-            );
-          })}
-        </ul>
-
-        {/* Mobile hamburger */}
-        <button
-          onClick={() => setOpen((o) => !o)}
+        <div
           style={{
-            display: "none",
-            background: "rgba(14, 238, 255, 0.12)",
-            border: "1.5px solid rgba(14, 238, 255, 0.3)",
-            color: "#0ef",
-            fontSize: 24,
-            cursor: "pointer",
-            lineHeight: 1,
-            borderRadius: 12,
-            padding: "8px 12px",
-            transition: "all .3s cubic-bezier(0.4, 0, 0.2, 1)",
-            fontWeight: 600,
-            boxShadow: "0 0 20px rgba(14, 238, 255, 0.1), inset 0 1px 3px rgba(255, 255, 255, 0.05)",
-            zIndex: 10000,
-          }}
-          className="hamburger"
-          aria-label="Toggle menu"
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(14, 238, 255, 0.2)";
-            e.currentTarget.style.boxShadow = "0 0 20px rgba(14, 238, 255, 0.25), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
-            e.currentTarget.style.transform = "scale(1.05)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(14, 238, 255, 0.12)";
-            e.currentTarget.style.boxShadow = "0 0 20px rgba(14, 238, 255, 0.1), inset 0 1px 3px rgba(255, 255, 255, 0.05)";
-            e.currentTarget.style.transform = "scale(1)";
+            padding: "0 1.5rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            height: navHeight,
+            transition: "height 0.4s ease",
           }}
         >
-          <i className={open ? "bi bi-x-lg" : "bi bi-code-slash"} style={{ transition: "transform .3s ease", transform: open ? "rotate(90deg)" : "rotate(0deg)" }} />
-        </button>
-      </div>
+          <MagneticWrapper>
+            <a
+              href="#home"
+              onClick={(e) => scrollTo(e, "#home")}
+              className="nav-logo-text"
+              style={{
+                fontSize: scrolled ? 22 : 26,
+                fontWeight: 800,
+                textDecoration: "none",
+                letterSpacing: 1,
+                display: "flex",
+                alignItems: "center",
+                transition: "font-size 0.4s ease",
+              }}
+            >
+              Dinesh<span style={{ color: "#0ef", marginLeft: 2 }}>.</span><span className="beating-heart" style={{ display: "inline-block", marginLeft: 4 }}>❤️</span>
+            </a>
+          </MagneticWrapper>
 
-      {/* Mobile dropdown */}
+          {/* Desktop nav */}
+          <ul style={{ display: "flex", gap: "1rem", listStyle: "none", margin: 0, padding: 0 }} className="desktop-nav">
+            {NAV_LINKS.map((l) => {
+              const isActive = active === l.href.replace("#", "");
+              return (
+                <li key={l.href}>
+                  <MagneticWrapper>
+                    <ScrambleLink l={l} isActive={isActive} scrollTo={scrollTo} />
+                  </MagneticWrapper>
+                </li>
+              );
+            })}
+          </ul>
+
+          {/* Mobile hamburger */}
+          <button
+            ref={hamburgerRef}
+            onClick={() => setOpen((o) => !o)}
+            style={{
+              display: "none",
+              background: open ? "rgba(14, 238, 255, 0.2)" : "rgba(14, 238, 255, 0.12)",
+              border: "1.5px solid rgba(14, 238, 255, 0.3)",
+              color: "#0ef",
+              fontSize: 24,
+              cursor: "pointer",
+              lineHeight: 1,
+              borderRadius: 12,
+              padding: "8px 12px",
+              transition: "all .3s cubic-bezier(0.4, 0, 0.2, 1)",
+              fontWeight: 600,
+              boxShadow: "0 0 20px rgba(14, 238, 255, 0.1), inset 0 1px 3px rgba(255, 255, 255, 0.05)",
+            }}
+            className="hamburger"
+            aria-label="Toggle menu"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(14, 238, 255, 0.2)";
+              e.currentTarget.style.boxShadow = "0 0 20px rgba(14, 238, 255, 0.25), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+              e.currentTarget.style.transform = "scale(1.05)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = open ? "rgba(14, 238, 255, 0.2)" : "rgba(14, 238, 255, 0.12)";
+              e.currentTarget.style.boxShadow = "0 0 20px rgba(14, 238, 255, 0.1), inset 0 1px 3px rgba(255, 255, 255, 0.05)";
+              e.currentTarget.style.transform = "scale(1)";
+            }}
+          >
+            <i className={open ? "bi bi-x-lg" : "bi bi-code-slash"} style={{ transition: "transform .3s ease", transform: open ? "rotate(90deg)" : "rotate(0deg)" }} />
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile dropdown — rendered OUTSIDE <nav> to escape overflow:hidden from matrix-border-container */}
       {open && (
-        <div style={{ 
-          position: "absolute", 
-          top: "calc(100% + 15px)", 
-          left: 0, 
-          right: 0, 
-          background: "rgba(10, 16, 22, 0.9)", 
-          border: "1px solid rgba(14, 238, 255, 0.15)", 
-          backdropFilter: "blur(20px)", 
-          borderRadius: 20,
-          padding: "1rem 1.5rem", 
-          boxShadow: "0 15px 40px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.05)" 
-        }}>
+        <div
+          ref={dropdownRef}
+          className="mobile-dropdown"
+          style={{
+            position: "fixed",
+            top: navTop + navHeight + 12,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: scrolled ? "calc(100% - 60px)" : "calc(100% - 40px)",
+            maxWidth: 1200,
+            zIndex: 1001,
+            background: "rgba(10, 16, 22, 0.97)",
+            border: "1px solid rgba(14, 238, 255, 0.2)",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+            borderRadius: 20,
+            padding: "0.75rem 1rem",
+            boxShadow: "0 20px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(14, 238, 255, 0.05), inset 0 1px 2px rgba(255, 255, 255, 0.05)",
+          }}>
           {NAV_LINKS.map((l) => {
             const isActive = active === l.href.replace("#", "");
             return (
@@ -292,6 +322,6 @@ export default function Navbar() {
           })}
         </div>
       )}
-    </nav>
+    </>
   );
 }
