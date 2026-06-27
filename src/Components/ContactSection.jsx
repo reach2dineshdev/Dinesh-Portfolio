@@ -20,50 +20,46 @@ export default function ContactSection() {
     const text1 = "> Initializing secure connection...";
     const text2 = "\n> Connection established.\n> Ready. Enter message below.";
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          timeouts.forEach(clearTimeout);
-          timeouts = [];
-          
-          setBootSequence("");
-          setIsBooted(false);
-          
-          let currentText = "";
-          
-          const sleep = (ms) => new Promise(r => {
-            const t = setTimeout(r, ms);
-            timeouts.push(t);
-          });
+    const sleep = (ms) => new Promise(r => {
+      const t = setTimeout(r, ms);
+      timeouts.push(t);
+    });
 
-          const runSequence = async () => {
-            for (let i = 0; i < text1.length; i++) {
-              if (!isMounted) return;
-              currentText += text1.charAt(i);
-              setBootSequence(currentText);
-              await sleep(30);
-            }
-            await sleep(400);
-            for (let j = 0; j < text2.length; j++) {
-              if (!isMounted) return;
-              currentText += text2.charAt(j);
-              setBootSequence(currentText);
-              await sleep(30);
-            }
-            await sleep(600);
-            if (isMounted) setIsBooted(true);
-          };
-          
-          runSequence();
-        } else {
-          timeouts.forEach(clearTimeout);
-          timeouts = [];
-          setBootSequence("");
-          setIsBooted(false);
-        }
-      },
-      { threshold: 0.2 }
-    );
+    const runSequence = async () => {
+      let currentText = "";
+      for (let i = 0; i < text1.length; i++) {
+        if (!isMounted) return;
+        currentText += text1.charAt(i);
+        setBootSequence(currentText);
+        await sleep(30);
+      }
+      await sleep(400);
+      for (let j = 0; j < text2.length; j++) {
+        if (!isMounted) return;
+        currentText += text2.charAt(j);
+        setBootSequence(currentText);
+        await sleep(30);
+      }
+      await sleep(600);
+      if (isMounted) setIsBooted(true);
+    };
+
+    const observerCallback = (entries) => {
+      if (entries[0].isIntersecting) {
+        timeouts.forEach(clearTimeout);
+        timeouts = [];
+        setBootSequence("");
+        setIsBooted(false);
+        runSequence();
+      } else {
+        timeouts.forEach(clearTimeout);
+        timeouts = [];
+        setBootSequence("");
+        setIsBooted(false);
+      }
+    };
+
+    const observer = new IntersectionObserver(observerCallback, { threshold: 0.2 });
 
     if (terminalRef.current) observer.observe(terminalRef.current);
     
