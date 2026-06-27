@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import PropTypes from 'prop-types';
 import { BADGE_BG } from "../data/constants";
 
 export default function ProjectCard({ title, img, fallbackImg, badges, badgeColors, desc, features, live, github, reverse }) {
@@ -121,3 +122,16 @@ export default function ProjectCard({ title, img, fallbackImg, badges, badgeColo
     </div>
   );
 }
+
+ProjectCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  img: PropTypes.string.isRequired,
+  fallbackImg: PropTypes.string,
+  badges: PropTypes.arrayOf(PropTypes.string).isRequired,
+  badgeColors: PropTypes.arrayOf(PropTypes.string).isRequired,
+  desc: PropTypes.string.isRequired,
+  features: PropTypes.arrayOf(PropTypes.string).isRequired,
+  live: PropTypes.string,
+  github: PropTypes.string,
+  reverse: PropTypes.bool,
+};

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import PropTypes from 'prop-types';
 
 export default function ScrollDownButton({ target = "about" }) {
   const { t } = useTranslation();
@@ -90,6 +91,14 @@ export default function ScrollDownButton({ target = "about" }) {
         className="liquid-mouse-container" 
         onClick={() => scrollTo(target)}
         aria-label={`Scroll to ${target}`}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            scrollTo(target);
+          }
+        }}
       >
         <div className="mouse-outline">
           <div className="mouse-wheel"></div>
@@ -99,3 +108,7 @@ export default function ScrollDownButton({ target = "about" }) {
     </div>
   );
 }
+
+ScrollDownButton.propTypes = {
+  target: PropTypes.string,
+};

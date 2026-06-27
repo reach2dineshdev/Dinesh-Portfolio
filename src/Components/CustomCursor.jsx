@@ -71,7 +71,7 @@ export default function CustomCursor() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        opacity: isMobile ? 0 : hidden ? 0 : 1,
+        opacity: (isMobile || hidden) ? 0 : 1,
         transition: "opacity 0.15s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
       }}
     >

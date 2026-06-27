@@ -39,7 +39,15 @@ export default function ExperienceSection() {
                   }}
                 >
                   {exp.logo ? (
-                    <img src={exp.logo === '/src/assets/images/softtechashram.png' ? softtechLogo : exp.logo === '/src/assets/images/TVSSCS.png' ? tvsLogo : exp.logo} alt={exp.company} style={{ width: 64, height: 64, objectFit: 'contain', imageRendering: 'auto' }} />
+                    (() => {
+                      let resolvedLogo = exp.logo;
+                      if (exp.logo === '/src/assets/images/softtechashram.png') {
+                        resolvedLogo = softtechLogo;
+                      } else if (exp.logo === '/src/assets/images/TVSSCS.png') {
+                        resolvedLogo = tvsLogo;
+                      }
+                      return <img src={resolvedLogo} alt={exp.company} style={{ width: 64, height: 64, objectFit: 'contain', imageRendering: 'auto' }} />;
+                    })()
                   ) : (
                     <div style={{ color: '#0ef', fontWeight: 700, fontSize: 18 }}>{exp.company.split(' ').map(w=>w[0]).join('')}</div>
                   )}

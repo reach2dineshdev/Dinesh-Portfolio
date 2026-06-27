@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import PropTypes from 'prop-types';
 import { NAV_LINKS } from "../data/constants";
 import { useActiveSection } from "../hooks/useActiveSection";
 
@@ -31,6 +32,10 @@ const MagneticWrapper = ({ children }) => {
       {children}
     </div>
   );
+};
+
+MagneticWrapper.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 const ScrambleLink = ({ l, isActive, scrollTo }) => {
@@ -124,6 +129,16 @@ const ScrambleLink = ({ l, isActive, scrollTo }) => {
       </span>
     </a>
   );
+};
+
+ScrambleLink.propTypes = {
+  l: PropTypes.shape({
+    href: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    icon: PropTypes.string,
+  }).isRequired,
+  isActive: PropTypes.bool.isRequired,
+  scrollTo: PropTypes.func.isRequired,
 };
 
 export default function Navbar() {
