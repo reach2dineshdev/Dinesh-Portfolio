@@ -49,8 +49,4 @@ export default function ScrollReveal({ children }) {
 
 ScrollReveal.propTypes = {
   children: PropTypes.node.isRequired,
-  direction: PropTypes.string,
-  delay: PropTypes.number,
-  distance: PropTypes.number,
-  duration: PropTypes.number,
 };

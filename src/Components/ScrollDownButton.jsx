@@ -87,24 +87,17 @@ export default function ScrollDownButton({ target = "about" }) {
         }
       `}</style>
 
-      <div 
+      <button 
         className="liquid-mouse-container" 
         onClick={() => scrollTo(target)}
         aria-label={`Scroll to ${target}`}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            scrollTo(target);
-          }
-        }}
+        style={{ background: 'transparent', border: 'none', padding: 0 }}
       >
         <div className="mouse-outline">
           <div className="mouse-wheel"></div>
         </div>
         <span className="mouse-text">{t('scroll')}</span>
-      </div>
+      </button>
     </div>
   );
 }
