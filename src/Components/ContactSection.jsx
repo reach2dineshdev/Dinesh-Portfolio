@@ -125,29 +125,28 @@ export default function ContactSection() {
   };
 
   // Submit Upload Sequence
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if(isSending) return;
     setIsSending(true);
     setSendProgress(0);
 
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+    
     let progress = 0;
-    const interval = setInterval(() => {
-      progress += Math.floor(Math.random() * 15) + 5; // Random chunk progress // NOSONAR
+    while(progress < 100) {
+      progress += Math.floor(Math.random() * 15) + 5; // NOSONAR
       if(progress > 100) progress = 100;
       setSendProgress(progress);
-      
-      if(progress >= 100) {
-        clearInterval(interval);
-        setTimeout(() => {
-          globalThis.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(form.subject)}&body=${encodeURIComponent(form.message)}`;
-          setTimeout(() => {
-            setIsSending(false);
-            setForm({ name: "", email: "", phone: "", subject: "", message: "" });
-          }, 1000);
-        }, 500);
-      }
-    }, 150);
+      await sleep(150);
+    }
+    
+    await sleep(500);
+    globalThis.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(form.subject)}&body=${encodeURIComponent(form.message)}`;
+    
+    await sleep(1000);
+    setIsSending(false);
+    setForm({ name: "", email: "", phone: "", subject: "", message: "" });
   };
 
   const inputStyle = {

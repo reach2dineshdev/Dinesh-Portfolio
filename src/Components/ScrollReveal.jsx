@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 
 export default function ScrollReveal({ children }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -45,3 +46,11 @@ export default function ScrollReveal({ children }) {
     </div>
   );
 }
+
+ScrollReveal.propTypes = {
+  children: PropTypes.node.isRequired,
+  direction: PropTypes.string,
+  delay: PropTypes.number,
+  distance: PropTypes.number,
+  duration: PropTypes.number,
+};

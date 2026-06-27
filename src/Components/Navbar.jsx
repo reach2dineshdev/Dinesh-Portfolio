@@ -42,7 +42,7 @@ const ScrambleLink = ({ l, isActive, scrollTo }) => {
   const [displayText, setDisplayText] = useState(l.label);
   const [isHovered, setIsHovered] = useState(false);
   const intervalRef = useRef(null);
-  const chars = "!<>-_\\/[]{}—=+*^?#_01";
+  const chars = String.raw`!<>-_\/[]{}—=+*^?#_01`;
 
   const triggerScramble = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
@@ -51,7 +51,7 @@ const ScrambleLink = ({ l, isActive, scrollTo }) => {
       setDisplayText(
         l.label.split("").map((letter, index) => {
           if (index < iteration) return l.label[index];
-          return chars[Math.floor(Math.random() * chars.length)]; // NOSONAR
+          return chars[Math.floor(Math.random() * chars.length)]; // NOSONAR
         }).join("")
       );
       if (iteration >= l.label.length) {
@@ -86,6 +86,22 @@ const ScrambleLink = ({ l, isActive, scrollTo }) => {
   // Determine active styles based on isActive or isHovered
   const showActiveStyle = isActive || isHovered;
   
+  let linkColor = "#a8b3c1";
+  if (showActiveStyle) {
+    linkColor = isActive ? "#0ef" : "#fff";
+  }
+
+  let linkBg = "transparent";
+  if (isActive) linkBg = "rgba(14, 238, 255, 0.12)";
+  else if (isHovered) linkBg = "rgba(14, 238, 255, 0.08)";
+
+  let linkBorder = "1px solid transparent";
+  if (isActive) linkBorder = "1px solid rgba(14, 238, 255, 0.3)";
+
+  let linkBoxShadow = "none";
+  if (isActive) linkBoxShadow = "0 0 20px rgba(14, 238, 255, 0.15), inset 0 1px 3px rgba(255, 255, 255, 0.05)";
+  else if (isHovered) linkBoxShadow = "0 0 15px rgba(14,238,255,0.2)";
+
   // Clean fallback: If it's not active and not hovered, it MUST be the original label.
   const finalDisplayText = showActiveStyle ? displayText : l.label;
 
@@ -104,18 +120,18 @@ const ScrambleLink = ({ l, isActive, scrollTo }) => {
         gap: 6,
         padding: "8px 16px",
         borderRadius: 10,
-        color: showActiveStyle ? (isActive ? "#0ef" : "#fff") : "#a8b3c1",
+        color: linkColor,
         textDecoration: "none",
         fontSize: 14,
         fontWeight: 600,
         transition: "all .3s cubic-bezier(0.4, 0, 0.2, 1)",
-        background: isActive ? "rgba(14, 238, 255, 0.12)" : (isHovered ? "rgba(14, 238, 255, 0.08)" : "transparent"),
-        border: isActive ? "1px solid rgba(14, 238, 255, 0.3)" : "1px solid transparent",
-        boxShadow: isActive ? "0 0 20px rgba(14, 238, 255, 0.15), inset 0 1px 3px rgba(255, 255, 255, 0.05)" : (isHovered ? "0 0 15px rgba(14,238,255,0.2)" : "none"),
+        background: linkBg,
+        border: linkBorder,
+        boxShadow: linkBoxShadow,
         textShadow: showActiveStyle ? "0 0 8px rgba(14,238,255,0.8)" : "none",
       }}
     >
-      {l.icon && l.icon.startsWith('http') ? (
+      {l.icon?.startsWith('http') ? (
         <img
           src={l.icon}
           alt={l.label}

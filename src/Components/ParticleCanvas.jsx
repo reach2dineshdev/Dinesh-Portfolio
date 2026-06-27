@@ -31,12 +31,12 @@ export default function ParticleCanvas() {
 
     const symbols = ["</>", "{}", "<>", "JS", "UI", "DB", "API", "<>", "&lt;/&gt;"];
 
-    const mkP = (x, y, baseSpeed = 1.0) => {
-      const angle = Math.random() * Math.PI * 2; // NOSONAR
-      const speed = baseSpeed + Math.random() * 1.1; // NOSONAR
+    const mkP = (x, y, baseSpeed = 1) => {
+      const angle = Math.random() * Math.PI * 2; // NOSONAR
+      const speed = baseSpeed + Math.random() * 1.1; // NOSONAR
       const hues = [180, 190, 200, 170, 160];
-      const symbol = symbols[Math.floor(Math.random() * symbols.length)]; // NOSONAR
-      const size = 1.5 + Math.random() * 3; // NOSONAR
+      const symbol = symbols[Math.floor(Math.random() * symbols.length)]; // NOSONAR
+      const size = 1.5 + Math.random() * 3; // NOSONAR
       return {
         x,
         y,
@@ -44,26 +44,26 @@ export default function ParticleCanvas() {
         vy: Math.sin(angle) * speed,
         alpha: 1,
         radius: size,
-        phase: Math.random() * Math.PI * 2, // NOSONAR
-        color: `hsla(${hues[Math.floor(Math.random() * hues.length)]},100%,70%,${0.5 + Math.random() * 0.35})`, // NOSONAR
+        phase: Math.random() * Math.PI * 2, // NOSONAR
+        color: `hsla(${hues[Math.floor(Math.random() * hues.length)]},100%,70%,${0.5 + Math.random() * 0.35})`, // NOSONAR
         life: 0,
-        maxLife: 110 + Math.random() * 100, // NOSONAR
+        maxLife: 110 + Math.random() * 100, // NOSONAR
         symbol,
         size,
       };
     };
 
     const spawnEdge = () => {
-      const edge = Math.floor(Math.random() * 4); // NOSONAR
+      const edge = Math.floor(Math.random() * 4); // NOSONAR
       switch (edge) {
         case 0:
-          return mkP(Math.random() * w, -10, 0.6); // NOSONAR
+          return mkP(Math.random() * w, -10, 0.6); // NOSONAR
         case 1:
-          return mkP(Math.random() * w, h + 10, 0.6); // NOSONAR
+          return mkP(Math.random() * w, h + 10, 0.6); // NOSONAR
         case 2:
-          return mkP(-10, Math.random() * h, 0.6); // NOSONAR
+          return mkP(-10, Math.random() * h, 0.6); // NOSONAR
         default:
-          return mkP(w + 10, Math.random() * h, 0.6); // NOSONAR
+          return mkP(w + 10, Math.random() * h, 0.6); // NOSONAR
       }
     };
 
@@ -72,7 +72,7 @@ export default function ParticleCanvas() {
     const onMove = (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      if (Math.random() > 0.4) { // NOSONAR
+      if (Math.random() > 0.4) { // NOSONAR
         particles.push(mkP(e.clientX, e.clientY, 1.2));
       }
     };
@@ -85,7 +85,7 @@ export default function ParticleCanvas() {
     const draw = () => {
       ctx.clearRect(0, 0, w, h);
 
-      if (particles.length < 180 && Math.random() < 0.22) { // NOSONAR
+      if (particles.length < 180 && Math.random() < 0.22) { // NOSONAR
         particles.push(spawnEdge());
       }
 
@@ -100,7 +100,7 @@ export default function ParticleCanvas() {
 
         ctx.save();
         ctx.globalAlpha = p.alpha;
-        if (p.symbol && Math.random() > 0.3) { // NOSONAR
+        if (p.symbol && Math.random() > 0.3) { // NOSONAR
           ctx.fillStyle = p.color;
           ctx.font = `${10 + p.size * 3}px Poppins, sans-serif`;
           ctx.textAlign = "center";

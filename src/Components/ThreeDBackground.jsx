@@ -35,14 +35,14 @@ export default function ThreeDBackground() {
     const COUNT = Math.min(28, Math.floor((w * h) / 90000));
     for (let i = 0; i < COUNT; i++) {
       items.push({
-        x: (Math.random() - 0.5) * w * 1.6, // NOSONAR
-        y: (Math.random() - 0.5) * h * 1.2, // NOSONAR
-        z: Math.random() * 1200 - 600, // NOSONAR
-        size: 18 + Math.random() * 36, // NOSONAR
-        rot: Math.random() * Math.PI * 2, // NOSONAR
-        speed: 0.0004 + Math.random() * 0.0012, // NOSONAR
-        type: Math.random() > 0.5 ? 'box' : 'sym', // NOSONAR
-        sym: ['</>', '{}', 'JS', 'API', '<>'][Math.floor(Math.random()*5)] // NOSONAR
+        x: (Math.random() - 0.5) * w * 1.6, // NOSONAR
+        y: (Math.random() - 0.5) * h * 1.2, // NOSONAR
+        z: Math.random() * 1200 - 600, // NOSONAR
+        size: 18 + Math.random() * 36, // NOSONAR
+        rot: Math.random() * Math.PI * 2, // NOSONAR
+        speed: 0.0004 + Math.random() * 0.0012, // NOSONAR
+        type: Math.random() > 0.5 ? 'box' : 'sym', // NOSONAR
+        sym: ['</>', '{}', 'JS', 'API', '<>'][Math.floor(Math.random()*5)] // NOSONAR
       });
     }
 
