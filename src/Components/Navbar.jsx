@@ -35,6 +35,7 @@ const MagneticWrapper = ({ children }) => {
 
 const ScrambleLink = ({ l, isActive, scrollTo }) => {
   const [displayText, setDisplayText] = useState(l.label);
+  const [isHovered, setIsHovered] = useState(false);
   const intervalRef = useRef(null);
   const chars = "!<>-_\\/[]{}—=+*^?#_01";
 
@@ -48,7 +49,10 @@ const ScrambleLink = ({ l, isActive, scrollTo }) => {
           return chars[Math.floor(Math.random() * chars.length)];
         }).join("")
       );
-      if (iteration >= l.label.length) clearInterval(intervalRef.current);
+      if (iteration >= l.label.length) {
+        clearInterval(intervalRef.current);
+        setDisplayText(l.label);
+      }
       iteration += 1 / 3;
     }, 20);
   }, [l.label]);
@@ -62,34 +66,31 @@ const ScrambleLink = ({ l, isActive, scrollTo }) => {
     };
   }, [isActive, triggerScramble]);
 
-  const handleMouseEnter = (e) => {
-    if (!isActive) {
-      e.currentTarget.style.background = "rgba(14, 238, 255, 0.08)";
-      e.currentTarget.style.color = "#fff";
-      e.currentTarget.style.boxShadow = "0 0 15px rgba(14,238,255,0.2)";
-      e.currentTarget.style.textShadow = "0 0 8px rgba(14,238,255,0.8)";
-    }
+  const handleMouseEnter = () => {
+    setIsHovered(true);
     triggerScramble();
   };
 
-  const handleMouseLeave = (e) => {
-    if (!isActive) {
-      e.currentTarget.style.background = "transparent";
-      e.currentTarget.style.color = "#a8b3c1";
-      e.currentTarget.style.boxShadow = "none";
-      e.currentTarget.style.textShadow = "none";
-    }
-    // Only interrupt the animation if it's not the active tab
+  const handleMouseLeave = () => {
+    setIsHovered(false);
     if (!isActive) {
       if (intervalRef.current) clearInterval(intervalRef.current);
-      setDisplayText(l.label);
     }
   };
+
+  // Determine active styles based on isActive or isHovered
+  const showActiveStyle = isActive || isHovered;
+  
+  // Clean fallback: If it's not active and not hovered, it MUST be the original label.
+  const finalDisplayText = showActiveStyle ? displayText : l.label;
 
   return (
     <a
       href={l.href}
-      onClick={(e) => scrollTo(e, l.href)}
+      onClick={(e) => {
+        setIsHovered(false);
+        scrollTo(e, l.href);
+      }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       style={{
@@ -98,15 +99,15 @@ const ScrambleLink = ({ l, isActive, scrollTo }) => {
         gap: 6,
         padding: "8px 16px",
         borderRadius: 10,
-        color: isActive ? "#0ef" : "#a8b3c1",
+        color: showActiveStyle ? (isActive ? "#0ef" : "#fff") : "#a8b3c1",
         textDecoration: "none",
         fontSize: 14,
         fontWeight: 600,
         transition: "all .3s cubic-bezier(0.4, 0, 0.2, 1)",
-        background: isActive ? "rgba(14, 238, 255, 0.12)" : "transparent",
+        background: isActive ? "rgba(14, 238, 255, 0.12)" : (isHovered ? "rgba(14, 238, 255, 0.08)" : "transparent"),
         border: isActive ? "1px solid rgba(14, 238, 255, 0.3)" : "1px solid transparent",
-        boxShadow: isActive ? "0 0 20px rgba(14, 238, 255, 0.15), inset 0 1px 3px rgba(255, 255, 255, 0.05)" : "none",
-        textShadow: isActive ? "0 0 8px rgba(14,238,255,0.8)" : "none",
+        boxShadow: isActive ? "0 0 20px rgba(14, 238, 255, 0.15), inset 0 1px 3px rgba(255, 255, 255, 0.05)" : (isHovered ? "0 0 15px rgba(14,238,255,0.2)" : "none"),
+        textShadow: showActiveStyle ? "0 0 8px rgba(14,238,255,0.8)" : "none",
       }}
     >
       {l.icon && l.icon.startsWith('http') ? (
@@ -119,7 +120,7 @@ const ScrambleLink = ({ l, isActive, scrollTo }) => {
         <i className={l.icon} style={{ fontSize: 15 }} />
       )}
       <span style={{ minWidth: `${l.label.length * 8}px`, display: "inline-block" }}>
-        {displayText}
+        {finalDisplayText}
       </span>
     </a>
   );
