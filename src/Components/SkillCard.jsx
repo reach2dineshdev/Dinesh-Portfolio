@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 export default function SkillCard({ name, icon }) {
   return (
     <div className="skill-card">
@@ -6,3 +8,8 @@ export default function SkillCard({ name, icon }) {
     </div>
   );
 }
+
+SkillCard.propTypes = {
+  name: PropTypes.string.isRequired,
+  icon: PropTypes.string.isRequired,
+};

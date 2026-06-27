@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import PropTypes from "prop-types";
 
 // ── DATA ──────────────────────────────────────────────────────────────────────
 const NAV_LINKS = [
@@ -147,17 +148,15 @@ function useTypingEffect(strings, typeSpeed = 100, backSpeed = 80, backDelay = 2
         const t = setTimeout(() => setTyping(false), backDelay);
         return () => clearTimeout(t);
       }
+    } else if (charIdx > 0) {
+      const t = setTimeout(() => { setText(current.slice(0, charIdx - 1)); setCharIdx(c => c - 1); }, backSpeed);
+      return () => clearTimeout(t);
     } else {
-      if (charIdx > 0) {
-        const t = setTimeout(() => { setText(current.slice(0, charIdx - 1)); setCharIdx(c => c - 1); }, backSpeed);
-        return () => clearTimeout(t);
-      } else {
-        const t = setTimeout(() => {
-          setIdx(i => (i + 1) % strings.length);
-          setTyping(true);
-        }, 0);
-        return () => clearTimeout(t);
-      }
+      const t = setTimeout(() => {
+        setIdx(i => (i + 1) % strings.length);
+        setTyping(true);
+      }, 0);
+      return () => clearTimeout(t);
     }
   }, [charIdx, typing, idx, strings, typeSpeed, backSpeed, backDelay]);
 
@@ -205,12 +204,12 @@ function ParticleCanvas() {
     window.addEventListener("resize", resize);
     const particles = [];
     const mkP = (x,y) => {
-      const angle = Math.random()*Math.PI*2, speed = 2+Math.random()*3;
+      const angle = Math.random()*Math.PI*2, speed = 2+Math.random()*3; // NOSONAR
       const hues = [180,190,200,170,160];
       return { x,y, vx:Math.cos(angle)*speed, vy:Math.sin(angle)*speed,
-               alpha:1, radius:3+Math.random()*3,
-               color:`hsla(${hues[Math.floor(Math.random()*5)]},100%,60%,${0.7+Math.random()*0.3})`,
-               life:0, maxLife:30+Math.random()*20 };
+               alpha:1, radius:3+Math.random()*3, // NOSONAR
+               color:`hsla(${hues[Math.floor(Math.random()*5)]},100%,60%,${0.7+Math.random()*0.3})`, // NOSONAR
+               life:0, maxLife:30+Math.random()*20 }; // NOSONAR
     };
     const onMove = e => { for (let i=0;i<12;i++) particles.push(mkP(e.clientX,e.clientY)); };
     document.addEventListener("mousemove", onMove);
@@ -350,7 +349,7 @@ function HeroSection() {
       <div style={{ position:"absolute",bottom:30,left:"50%",transform:"translateX(-50%)",textAlign:"center" }}>
         <button onClick={()=>scrollTo("about")} style={{ background:"none",border:"none",cursor:"pointer",color:"#adb7be",display:"flex",flexDirection:"column",alignItems:"center",gap:4,fontSize:13 }}>
           <i className="uil uil-mouse-alt" style={{ fontSize:24,color:"#0ef" }} />
-          Scroll Down
+          {" "}Scroll Down
         </button>
       </div>
     </section>
@@ -420,7 +419,7 @@ function ExperienceSection() {
           </ul>
           <div style={{ background:"linear-gradient(90deg,#0ef,#00ffd5)",color:"#23283a",fontWeight:600,borderRadius:8,padding:"8px 18px",display:"inline-block",fontSize:15 }}>
             <i className="uil uil-award" style={{ marginRight:6 }} />
-            Issued By: Soft Tech Ashram
+            {" "}Issued By: Soft Tech Ashram
           </div>
         </div>
       </div>
@@ -428,6 +427,7 @@ function ExperienceSection() {
   );
 }
 
+SkillCard.propTypes = { name: PropTypes.string.isRequired, icon: PropTypes.string.isRequired };
 function SkillCard({ name, icon }) {
   return (
     <div style={{ background:"#23283a",borderRadius:12,padding:"20px 16px",display:"flex",flexDirection:"column",alignItems:"center",gap:10,
@@ -467,6 +467,18 @@ function SkillsSection() {
 
 const BADGE_BG = { primary:"#0d6efd",info:"#0dcaf0",warning:"#ffc107",success:"#198754",danger:"#dc3545",dark:"#212529",secondary:"#6c757d" };
 
+ProjectCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  img: PropTypes.string.isRequired,
+  fallbackImg: PropTypes.string,
+  badges: PropTypes.arrayOf(PropTypes.string).isRequired,
+  badgeColors: PropTypes.arrayOf(PropTypes.string).isRequired,
+  desc: PropTypes.string.isRequired,
+  features: PropTypes.arrayOf(PropTypes.string).isRequired,
+  live: PropTypes.string,
+  github: PropTypes.string,
+  reverse: PropTypes.bool
+};
 function ProjectCard({ title, img, fallbackImg, badges, badgeColors, desc, features, live, github, reverse }) {
   const [imgErr, setImgErr] = useState(false);
   return (

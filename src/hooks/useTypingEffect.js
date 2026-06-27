@@ -19,20 +19,18 @@ export function useTypingEffect(strings, typeSpeed = 100, backSpeed = 80, backDe
         const t = setTimeout(() => setTyping(false), backDelay);
         return () => clearTimeout(t);
       }
+    } else if (charIdx > 0) {
+      const t = setTimeout(() => {
+        setText(current.slice(0, charIdx - 1));
+        setCharIdx(c => c - 1);
+      }, backSpeed);
+      return () => clearTimeout(t);
     } else {
-      if (charIdx > 0) {
-        const t = setTimeout(() => {
-          setText(current.slice(0, charIdx - 1));
-          setCharIdx(c => c - 1);
-        }, backSpeed);
-        return () => clearTimeout(t);
-      } else {
-        const t = setTimeout(() => {
-          setIdx(i => (i + 1) % strings.length);
-          setTyping(true);
-        }, 0);
-        return () => clearTimeout(t);
-      }
+      const t = setTimeout(() => {
+        setIdx(i => (i + 1) % strings.length);
+        setTyping(true);
+      }, 0);
+      return () => clearTimeout(t);
     }
   }, [charIdx, typing, idx, strings, typeSpeed, backSpeed, backDelay]);
 

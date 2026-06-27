@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react";
+import PropTypes from 'prop-types';
 
 export default function SectionTitle({ title, highlight, align = "center", marginBottom = 60 }) {
   const [displayText, setDisplayText] = useState(title);
   const [displayHighlight, setDisplayHighlight] = useState(highlight || "");
   const ref = useRef(null);
-  const chars = "!<>-_\\/[]{}—=+*^?#_01";
+  const chars = String.raw`!<>-_\/[]{}—=+*^?#_01`;
 
   const startScramble = (targetText, setter) => {
     if (!targetText) return;
@@ -14,7 +15,7 @@ export default function SectionTitle({ title, highlight, align = "center", margi
         targetText.split("").map((char, index) => {
           if (char === " ") return " ";
           if (index < iteration) return targetText[index];
-          return chars[Math.floor(Math.random() * chars.length)];
+          return chars[Math.floor(Math.random() * chars.length)]; // NOSONAR
         }).join("")
       );
 
@@ -62,3 +63,10 @@ export default function SectionTitle({ title, highlight, align = "center", margi
     </h2>
   );
 }
+
+SectionTitle.propTypes = {
+  title: PropTypes.string.isRequired,
+  highlight: PropTypes.string,
+  align: PropTypes.string,
+  marginBottom: PropTypes.number,
+};

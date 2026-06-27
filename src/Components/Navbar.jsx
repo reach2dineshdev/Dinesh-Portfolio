@@ -51,7 +51,7 @@ const ScrambleLink = ({ l, isActive, scrollTo }) => {
       setDisplayText(
         l.label.split("").map((letter, index) => {
           if (index < iteration) return l.label[index];
-          return chars[Math.floor(Math.random() * chars.length)];
+          return chars[Math.floor(Math.random() * chars.length)]; // NOSONAR
         }).join("")
       );
       if (iteration >= l.label.length) {

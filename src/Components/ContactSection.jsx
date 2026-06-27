@@ -30,35 +30,31 @@ export default function ContactSection() {
           setIsBooted(false);
           
           let currentText = "";
-          let i = 0;
           
-          const typeWriter = () => {
-            if (!isMounted) return;
-            if (i < text1.length) {
+          const sleep = (ms) => new Promise(r => {
+            const t = setTimeout(r, ms);
+            timeouts.push(t);
+          });
+
+          const runSequence = async () => {
+            for (let i = 0; i < text1.length; i++) {
+              if (!isMounted) return;
               currentText += text1.charAt(i);
               setBootSequence(currentText);
-              i++;
-              timeouts.push(setTimeout(typeWriter, 30));
-            } else {
-              timeouts.push(setTimeout(() => {
-                let j = 0;
-                const typeWriter2 = () => {
-                  if (!isMounted) return;
-                  if (j < text2.length) {
-                    currentText += text2.charAt(j);
-                    setBootSequence(currentText);
-                    j++;
-                    timeouts.push(setTimeout(typeWriter2, 30));
-                  } else {
-                    timeouts.push(setTimeout(() => setIsBooted(true), 600));
-                  }
-                };
-                typeWriter2();
-              }, 400));
+              await sleep(30);
             }
+            await sleep(400);
+            for (let j = 0; j < text2.length; j++) {
+              if (!isMounted) return;
+              currentText += text2.charAt(j);
+              setBootSequence(currentText);
+              await sleep(30);
+            }
+            await sleep(600);
+            if (isMounted) setIsBooted(true);
           };
           
-          timeouts.push(setTimeout(typeWriter, 600));
+          runSequence();
         } else {
           timeouts.forEach(clearTimeout);
           timeouts = [];
@@ -107,7 +103,7 @@ export default function ContactSection() {
   // Placeholder Scramble Decryption
   const handleFocus = (e) => {
     e.target.style.borderColor = "#0ef";
-    const original = e.target.getAttribute("data-original-placeholder");
+    const original = e.target.dataset.originalPlaceholder;
     if (!original) return;
     
     let iterations = 0;
@@ -115,7 +111,7 @@ export default function ContactSection() {
     const interval = setInterval(() => {
       e.target.placeholder = original.split("").map((char, index) => {
         if(index < iterations) return original[index];
-        return chars[Math.floor(Math.random() * chars.length)];
+        return chars[Math.floor(Math.random() * chars.length)]; // NOSONAR
       }).join("");
       
       if(iterations >= original.length) clearInterval(interval);
@@ -125,7 +121,7 @@ export default function ContactSection() {
 
   const handleBlur = (e) => {
     e.target.style.borderColor = "rgba(0,238,255,0.2)";
-    e.target.placeholder = e.target.getAttribute("data-original-placeholder");
+    e.target.placeholder = e.target.dataset.originalPlaceholder;
   };
 
   // Submit Upload Sequence
@@ -137,14 +133,14 @@ export default function ContactSection() {
 
     let progress = 0;
     const interval = setInterval(() => {
-      progress += Math.floor(Math.random() * 15) + 5; // Random chunk progress
+      progress += Math.floor(Math.random() * 15) + 5; // Random chunk progress // NOSONAR
       if(progress > 100) progress = 100;
       setSendProgress(progress);
       
       if(progress >= 100) {
         clearInterval(interval);
         setTimeout(() => {
-          window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(form.subject)}&body=${encodeURIComponent(form.message)}`;
+          globalThis.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(form.subject)}&body=${encodeURIComponent(form.message)}`;
           setTimeout(() => {
             setIsSending(false);
             setForm({ name: "", email: "", phone: "", subject: "", message: "" });
@@ -284,13 +280,13 @@ export default function ContactSection() {
                 <button 
                   onClick={handleSubmit}
                   disabled={isSending}
-                  className={`themed-btn-3d primary ${!isSending ? 'btn-glow' : ''}`} 
+                  className={`themed-btn-3d primary ${isSending ? '' : 'btn-glow'}`} 
                   style={{ fontSize: 15, fontFamily: 'monospace', width: 220 }}
                 >
                   {isSending ? (
                     `Uploading [${'|'.repeat(Math.floor(sendProgress / 10))}${' '.repeat(10 - Math.floor(sendProgress / 10))}]`
                   ) : (
-                    "C:\\> Send_Message"
+                    String.raw`C:\> Send_Message`
                   )}
                 </button>
               </div>
